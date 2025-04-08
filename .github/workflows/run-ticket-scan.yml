@@ -2,12 +2,11 @@ name: Run Ticket Scanner Every 10 Minutes
 
 on:
   schedule:
-    - cron: '*/10 * * * *'  # every 10 minutes
-  workflow_dispatch:
+    - cron: '*/10 * * * *'  # runs every 10 minutes
+  workflow_dispatch:         # allows manual trigger
 
 jobs:
   run-scanner:
-    if: ${{ github.run_started_at <= '2025-04-20T00:00:00Z' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -41,3 +40,4 @@ jobs:
           echo "EMAIL_RECIPIENT = \"$EMAIL_RECIPIENT\"" >> private_config.py
           
           python seatgeek_scanner.py
+
