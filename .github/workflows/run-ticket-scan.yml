@@ -1,5 +1,5 @@
 name: Run Ticket Scanner Every 10 Minutes
-
+ 
 on:
   schedule:
     - cron: '*/10 * * * *'  # runs every 10 minutes
