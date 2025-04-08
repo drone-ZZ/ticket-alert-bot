@@ -110,7 +110,11 @@ def single_ticket_scan(webhook_url):
         if not (date.startswith("2025-04-18") or date.startswith("2025-04-19")):
             continue
 
-        max_price = 150 if date.startswith("2025-04-18") else 300
+        # Updated logic: look for tickets on the 19th under $400 after fees
+        if date.startswith("2025-04-19"):
+            max_price = 400
+        else:
+            max_price = 150  # Keep the 18th threshold
 
         if price <= max_price and url not in seen_event_urls:
             seen_event_urls.add(url)
