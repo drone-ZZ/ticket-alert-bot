@@ -5,6 +5,13 @@ from datetime import datetime
 import smtplib
 from email.message import EmailMessage
 
+# === Auto-disable after event ===
+end_date = datetime(2025, 4, 21)
+if datetime.now() > end_date:
+    print("🛑 Scanner stopped: show has passed.")
+    exit(0)
+
+
 try:
     from private_config import (
         DISCORD_WEBHOOK_URL,
