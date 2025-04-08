@@ -1,0 +1,43 @@
+name: Run Ticket Scanner Every 10 Minutes
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'  # every 10 minutes
+  workflow_dispatch:
+
+jobs:
+  run-scanner:
+    if: ${{ github.run_started_at <= '2025-04-20T00:00:00Z' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Run the scanner script
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          SEATGEEK_CLIENT_ID: ${{ secrets.SEATGEEK_CLIENT_ID }}
+          SEATGEEK_CLIENT_SECRET: ${{ secrets.SEATGEEK_CLIENT_SECRET }}
+          EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          EMAIL_RECIPIENT: ${{ secrets.EMAIL_RECIPIENT }}
+        run: |
+          echo "DISCORD_WEBHOOK_URL = \"$DISCORD_WEBHOOK_URL\"" > private_config.py
+          echo "SEATGEEK_CLIENT_ID = \"$SEATGEEK_CLIENT_ID\"" >> private_config.py
+          echo "SEATGEEK_CLIENT_SECRET = \"$SEATGEEK_CLIENT_SECRET\"" >> private_config.py
+          echo "EMAIL_ADDRESS = \"$EMAIL_ADDRESS\"" >> private_config.py
+          echo "EMAIL_PASSWORD = \"$EMAIL_PASSWORD\"" >> private_config.py
+          echo "EMAIL_RECIPIENT = \"$EMAIL_RECIPIENT\"" >> private_config.py
+          
+          python seatgeek_scanner.py
